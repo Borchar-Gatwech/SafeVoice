@@ -21,6 +21,12 @@ export default function Homepage({ setCurrentPage }) {
       color: 'from-green-500 to-green-600'
     },
     {
+      icon: '👥',
+      title: 'Peer Support Circles',
+      description: 'Connect with 3-5 survivors who understand. Share experiences and find strength together.',
+      color: 'from-indigo-500 to-indigo-600'
+    },
+    {
       icon: '📞',
       title: 'Connected Resources',
       description: 'Access professional support networks and crisis hotlines when you need them.',
@@ -31,12 +37,6 @@ export default function Homepage({ setCurrentPage }) {
       title: 'Instant Submission',
       description: 'Submit your report in minutes. No forms, no complications, just support.',
       color: 'from-pink-500 to-pink-600'
-    },
-    {
-      icon: '🌍',
-      title: 'Peer Support',
-      description: 'Connect with others who understand. Your voice joins a community of strength.',
-      color: 'from-indigo-500 to-indigo-600'
     }
   ]
 
@@ -85,10 +85,10 @@ export default function Homepage({ setCurrentPage }) {
               📝 Submit a Report
             </button>
             <button
-              onClick={() => setCurrentPage('support')}
+              onClick={() => setCurrentPage('circle')}
               className="px-8 py-4 bg-purple-700 text-white rounded-xl font-bold hover:bg-purple-800 transition-all transform hover:scale-105 shadow-lg text-lg border-2 border-white"
             >
-              💬 Chat with AI
+              👥 Find Peer Circle
             </button>
           </div>
         </div>
@@ -173,7 +173,7 @@ export default function Homepage({ setCurrentPage }) {
 
       {/* Features Spotlight */}
       <section className="bg-white rounded-3xl shadow-lg overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-0">
           {/* Anonymous Reporting */}
           <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-8 sm:p-12 text-white flex flex-col justify-center">
             <h3 className="text-3xl sm:text-4xl font-bold mb-4">📝 Anonymous Reporting</h3>
@@ -229,6 +229,34 @@ export default function Homepage({ setCurrentPage }) {
               Start Chatting →
             </button>
           </div>
+
+          {/* Peer Support Circles */}
+          <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 p-8 sm:p-12 text-white flex flex-col justify-center">
+            <h3 className="text-3xl sm:text-4xl font-bold mb-4">👥 Peer Support Circles</h3>
+            <p className="text-lg text-indigo-100 mb-6">
+              Connect with 3-5 other survivors who share similar experiences. Find strength in community, share stories safely, and support each other.
+            </p>
+            <ul className="space-y-3 text-indigo-100">
+              <li className="flex items-center gap-3">
+                <span className="text-2xl">✓</span>
+                <span>Verified members and safe spaces</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <span className="text-2xl">✓</span>
+                <span>AI safety monitoring</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <span className="text-2xl">✓</span>
+                <span>Optional trained facilitators</span>
+              </li>
+            </ul>
+            <button
+              onClick={() => setCurrentPage('circle')}
+              className="mt-8 px-6 py-3 bg-white text-indigo-600 rounded-xl font-bold hover:bg-gray-100 transition-all self-start"
+            >
+              Find Your Circle →
+            </button>
+          </div>
         </div>
       </section>
 
@@ -246,10 +274,10 @@ export default function Homepage({ setCurrentPage }) {
             Submit My Report
           </button>
           <button
-            onClick={() => setCurrentPage('support')}
+            onClick={() => setCurrentPage('circle')}
             className="px-8 py-4 bg-purple-700 text-white rounded-xl font-bold hover:bg-purple-800 transition-all transform hover:scale-105 shadow-lg text-lg border-2 border-white"
           >
-            Talk to AI Support
+            Join a Peer Circle
           </button>
         </div>
       </section>

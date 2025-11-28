@@ -3,11 +3,13 @@ import ReportForm from './components/ReportForm'
 import Homepage from './components/Homepage'
 import EmotionalSupportChat from './components/EmotionalSupportChat'
 import AdminDashboard from './components/AdminDashboard'
+import PeerSupportCircle from './components/PeerSupportCircle'
 
 const navItems = [
   { id: 'home', label: 'Home', icon: '🏠' },
   { id: 'report', label: 'Submit Report', icon: '📝' },
   { id: 'support', label: 'AI Support Chat', icon: '💬' },
+  { id: 'circle', label: 'Peer Circle', icon: '👥' },
   { id: 'resources', label: 'Resources', icon: '📞' },
   { id: 'admin', label: 'Admin', icon: '⚙️' }
 ]
@@ -100,6 +102,18 @@ export default function App() {
             </div>
             <div className="p-6 sm:p-8">
               <EmotionalSupportChat />
+            </div>
+          </div>
+        )}
+        
+        {currentPage === 'circle' && (
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 sm:px-8 py-8">
+              <h2 className="text-3xl sm:text-4xl font-bold text-white">👥 Peer Support Circle</h2>
+              <p className="text-indigo-100 mt-2">Connect with survivors and find strength in shared experiences</p>
+            </div>
+            <div className="p-6 sm:p-8">
+              <PeerSupportCircle />
             </div>
           </div>
         )}
