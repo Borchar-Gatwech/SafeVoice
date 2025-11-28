@@ -6,6 +6,8 @@ export default function PeerSupportCircle() {
   const [error, setError] = useState('')
   const [matchedCircle, setMatchedCircle] = useState(null)
   const [joinedCircle, setJoinedCircle] = useState(null)
+  const [anonymousId, setAnonymousId] = useState('')
+  const [memberDisplayName, setMemberDisplayName] = useState('')
   
   // Form data for matching
   const [formData, setFormData] = useState({
@@ -66,17 +68,17 @@ export default function PeerSupportCircle() {
       })
 
       const data = await res.json()
-
       if (!res.ok) {
         throw new Error(data.message || 'Failed to search for match')
       }
 
-      if (data.circleFound) {
-        setMatchedCircle(data.circle)
-        setStep('matching')
-      } else {
-        setStep('create')
-      }
+      // Server auto-joins and returns circle + member info.
+      const circle = { _id: data.circle.id || data.circle._id, ...data.circle }
+      setMatchedCircle(circle)
+      setJoinedCircle(circle)
+      setAnonymousId(data.member?.anonymousId || '')
+      setMemberDisplayName(data.member?.displayName || '')
+      setStep('joined')
     } catch (err) {
       setError(err.message)
       console.error(err)
@@ -92,24 +94,20 @@ export default function PeerSupportCircle() {
     setError('')
 
     try {
-      const res = await fetch(`/api/circles/${matchedCircle._id}/join`, {
+      // Reuse match endpoint to ensure the user is added and receives an anonymousId
+      const res = await fetch('/api/circles/match', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          memberData: {
-            joinedAt: new Date().toISOString(),
-            safetyLevel: formData.safetyLevel
-          }
-        })
+        body: JSON.stringify(formData)
       })
 
       const data = await res.json()
+      if (!res.ok) throw new Error(data.message || 'Failed to join circle')
 
-      if (!res.ok) {
-        throw new Error(data.message || 'Failed to join circle')
-      }
-
-      setJoinedCircle(data.circle)
+      const circle = { _id: data.circle.id || data.circle._id, ...data.circle }
+      setJoinedCircle(circle)
+      setAnonymousId(data.member?.anonymousId || '')
+      setMemberDisplayName(data.member?.displayName || '')
       setStep('joined')
     } catch (err) {
       setError(err.message)
@@ -124,32 +122,20 @@ export default function PeerSupportCircle() {
     setError('')
 
     try {
-      const res = await fetch('/api/circles', {
+      // Use match endpoint which will create a new circle if none exists
+      const res = await fetch('/api/circles/match', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          incidentType: formData.incidentType,
-          location: formData.location,
-          language: formData.language,
-          safetyLevel: formData.safetyLevel,
-          needsFacilitator: formData.wantsFacilitator,
-          createdBy: 'anonymous',
-          memberCount: 1,
-          maxMembers: 5,
-          members: [{
-            joinedAt: new Date().toISOString(),
-            safetyLevel: formData.safetyLevel
-          }]
-        })
+        body: JSON.stringify(formData)
       })
 
       const data = await res.json()
+      if (!res.ok) throw new Error(data.message || 'Failed to create circle')
 
-      if (!res.ok) {
-        throw new Error(data.message || 'Failed to create circle')
-      }
-
-      setJoinedCircle(data.circle)
+      const circle = { _id: data.circle.id || data.circle._id, ...data.circle }
+      setJoinedCircle(circle)
+      setAnonymousId(data.member?.anonymousId || '')
+      setMemberDisplayName(data.member?.displayName || '')
       setStep('joined')
     } catch (err) {
       setError(err.message)
