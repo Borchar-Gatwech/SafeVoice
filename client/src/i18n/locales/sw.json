@@ -1,0 +1,21 @@
+{
+  "welcome": "Karibu SafeCircle",
+  "submit_report": "Wasilisha Ripoti",
+  "peer_support": "Msaada wa Wenza",
+  "resources": "Rasilimali",
+  "home": "Nyumbani",
+  "admin": "Msimamizi",
+  "ai_support_chat": "Mazungumzo ya Msaada wa AI",
+  "peer_circle": "Mduara wa Wenza",
+  "privacy_protected": "Faragha Yako Imealindwa",
+  "privacy_notice": "Kila kitu unachoshiriki ni siri kabisa. Hatukusanyi au kuhifadhi taarifa za utambulisho wa kibinafsi.",
+  "what_happened": "Nini Kilifanyika?",
+  "optional": "(si lazima)",
+  "required": "*",
+  "submit": "Wasilisha",
+  "loading": "Inapakia...",
+  "error": "Hitilafu",
+  "success": "Mafanikio",
+  "cancel": "Ghairi"
+}
+

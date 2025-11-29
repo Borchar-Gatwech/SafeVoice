@@ -10,6 +10,13 @@ const authRouter = require('./src/routes/auth');
 const circlesRouter = require('./src/routes/circle.route');
 const developerRouter = require('./src/routes/developer.route');
 const resourcesRouter = require('./src/routes/resource.route');
+const badgeRouter = require('./src/routes/badge.route');
+const emailRouter = require('./src/routes/email.route');
+const trustRouter = require('./src/routes/trust.route');
+const chatRouter = require('./src/routes/chat.route');
+
+// Import language middleware
+const languageMiddleware = require('./src/middleware/language.middleware');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -17,6 +24,9 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Language detection middleware (must be before routes)
+app.use(languageMiddleware);
 
 // Swagger API Documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
@@ -30,6 +40,10 @@ app.use('/api/auth', authRouter);
 app.use('/api/circles', circlesRouter);
 app.use('/api/developer', developerRouter);
 app.use('/api/resources', resourcesRouter);
+app.use('/api/badges', badgeRouter);
+app.use('/api/email', emailRouter);
+app.use('/api/trust', trustRouter);
+app.use('/api/chat', chatRouter);
 
 // Root endpoint
 app.get('/', (req, res) => {
@@ -201,15 +215,31 @@ app.get('/docs', (req, res) => {
   });
 });
 
+// Import Socket.io setup
+const { initializeSocketIO } = require('./src/sockets/circleSocket');
+
+// Import cron jobs
+const weeklyDigestJob = require('./src/jobs/weeklyDigest');
+
 // Start server
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);
-    app.listen(PORT, () => {
+    const server = app.listen(PORT, () => {
       console.log(`🚀 SafeCircle API listening on port ${PORT}`);
       console.log(`📚 Documentation: http://localhost:${PORT}/docs`);
       console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
     });
+
+    // Initialize Socket.io
+    initializeSocketIO(server);
+    console.log(`⚡ Socket.io initialized on /circles namespace`);
+
+    // Start cron jobs (comment out in development if needed)
+    if (process.env.NODE_ENV === 'production') {
+      weeklyDigestJob.start();
+      console.log(`📧 Weekly digest job scheduled (Mondays 9 AM)`);
+    }
   } catch (err) {
     console.error('Failed to start server', err);
     process.exit(1);

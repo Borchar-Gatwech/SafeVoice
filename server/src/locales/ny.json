@@ -1,0 +1,36 @@
+{
+  "welcome": "Takulandirani ku SafeCircle",
+  "submit_report": "Tumiza Nkhani",
+  "peer_support": "Chithandizo cha Anthu",
+  "resources": "Zinthu",
+  "incident_types": {
+    "online_harassment": "Kutukwanidwa pa Intaneti",
+    "workplace_discrimination": "Kusankhidwa pa Nyumba",
+    "harassment": "Kutukwanidwa",
+    "safety_concern": "Mwayi Wotetezeka",
+    "discrimination": "Kusankhidwa",
+    "workplace_issue": "Vuto pa Nyumba",
+    "educational": "Maphunziro",
+    "health_related": "Zokhudza Thupi",
+    "online": "Pa Intaneti",
+    "other": "Zina"
+  },
+  "messages": {
+    "report_submitted": "Nkhani yatumizidwa bwino",
+    "matched_to_circle": "Mwakhazikitsidwa ku mpata wothandiza",
+    "report_not_found": "Nkhani sikupezeka",
+    "server_error": "Vuto la seva"
+  },
+  "common": {
+    "loading": "Zikukwezeka...",
+    "error": "Vuto",
+    "success": "Zabwino",
+    "submit": "Tumiza",
+    "cancel": "Kanani",
+    "save": "Sungani",
+    "delete": "Chotsani",
+    "edit": "Sinthani",
+    "close": "Tsekani"
+  }
+}
+

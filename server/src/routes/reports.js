@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { createReport, getReports, markReviewed } = require('../controllers/reportsController');
+const { createReport, getReports, markReviewed, getEvidenceImage } = require('../controllers/reportsController');
 const auth = require('../middleware/auth');
+const { uploadEvidenceImages } = require('../middleware/upload.middleware');
 
 /**
  * @swagger
@@ -51,7 +52,7 @@ const auth = require('../middleware/auth');
  *       400:
  *         description: Missing required fields
  */
-router.post('/', createReport);
+router.post('/', uploadEvidenceImages, createReport);
 
 /**
  * @swagger
@@ -105,5 +106,34 @@ router.get('/', auth, getReports);
  *         description: Report not found
  */
 router.patch('/:id/reviewed', auth, markReviewed);
+
+/**
+ * @swagger
+ * /api/reports/{id}/evidence/{imageId}:
+ *   get:
+ *     summary: Get evidence image (Admin only)
+ *     tags: [Reports]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: imageId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Image file
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Report or image not found
+ */
+router.get('/:id/evidence/:imageId', auth, getEvidenceImage);
 
 module.exports = router;

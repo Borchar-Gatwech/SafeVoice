@@ -1,0 +1,36 @@
+{
+  "welcome": "Bienvenue sur SafeCircle",
+  "submit_report": "Soumettre un rapport",
+  "peer_support": "Soutien par les pairs",
+  "resources": "Ressources",
+  "incident_types": {
+    "online_harassment": "Harcèlement en ligne",
+    "workplace_discrimination": "Discrimination au travail",
+    "harassment": "Harcèlement",
+    "safety_concern": "Préoccupation de sécurité",
+    "discrimination": "Discrimination",
+    "workplace_issue": "Problème au travail",
+    "educational": "Éducatif",
+    "health_related": "Lié à la santé",
+    "online": "En ligne",
+    "other": "Autre"
+  },
+  "messages": {
+    "report_submitted": "Rapport soumis avec succès",
+    "matched_to_circle": "Vous avez été jumelé à un cercle de soutien",
+    "report_not_found": "Rapport non trouvé",
+    "server_error": "Erreur du serveur"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "submit": "Soumettre",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "close": "Fermer"
+  }
+}
+

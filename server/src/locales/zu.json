@@ -1,0 +1,36 @@
+{
+  "welcome": "Siyakwamukela e-SafeCircle",
+  "submit_report": "Thumela Umbiko",
+  "peer_support": "Ukwesekwa Kwabalingani",
+  "resources": "Izinsiza",
+  "incident_types": {
+    "online_harassment": "Ukuhlukunyezwa Kwe-Intanethi",
+    "workplace_discrimination": "Ukucwaswa Emsebenzini",
+    "harassment": "Ukuhlukunyezwa",
+    "safety_concern": "Ukukhathazeka Ngokuphepha",
+    "discrimination": "Ukucwaswa",
+    "workplace_issue": "Inkinga Emsebenzini",
+    "educational": "Imfundo",
+    "health_related": "Ehlobene Nezempilo",
+    "online": "I-Intanethi",
+    "other": "Okunye"
+  },
+  "messages": {
+    "report_submitted": "Umbiko uthunyelwe ngempumelelo",
+    "matched_to_circle": "Uxhumanisiwe nombuthano wokusekwa",
+    "report_not_found": "Umbiko awutholakalanga",
+    "server_error": "Iphutha le-server"
+  },
+  "common": {
+    "loading": "Iyalayisha...",
+    "error": "Iphutha",
+    "success": "Impumelelo",
+    "submit": "Thumela",
+    "cancel": "Khansela",
+    "save": "Gcina",
+    "delete": "Susa",
+    "edit": "Hlela",
+    "close": "Vala"
+  }
+}
+

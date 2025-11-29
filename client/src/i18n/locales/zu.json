@@ -1,0 +1,21 @@
+{
+  "welcome": "Siyakwamukela ku-SafeCircle",
+  "submit_report": "Thumela Umbiko",
+  "peer_support": "Ukusekwa Komhlangano",
+  "resources": "Izinsiza",
+  "home": "Ikhaya",
+  "admin": "Abaphathi",
+  "ai_support_chat": "I-Chat Yosizo Lwe-AI",
+  "peer_circle": "Umbuthano Womhlangano",
+  "privacy_protected": "Ubumfihlo Bakho Buvikelwe",
+  "privacy_notice": "Konke okwabelana ngakho kuyimfihlo ephelele. Asiqoqi noma sigcine imininingwane yokuhlonza umuntu siqu.",
+  "what_happened": "Kwenzenjani?",
+  "optional": "(okukhethwayo)",
+  "required": "*",
+  "submit": "Thumela",
+  "loading": "Iyalayisha...",
+  "error": "Iphutha",
+  "success": "Impumelelo",
+  "cancel": "Khansela"
+}
+

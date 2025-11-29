@@ -1,0 +1,36 @@
+{
+  "welcome": "Karibu SafeCircle",
+  "submit_report": "Wasilisha Ripoti",
+  "peer_support": "Msaada wa Rika",
+  "resources": "Rasilimali",
+  "incident_types": {
+    "online_harassment": "Unyanyasaji wa Mtandaoni",
+    "workplace_discrimination": "Ubaguzi Kazini",
+    "harassment": "Unyanyasaji",
+    "safety_concern": "Wasiwasi wa Usalama",
+    "discrimination": "Ubaguzi",
+    "workplace_issue": "Suala la Kazini",
+    "educational": "Elimu",
+    "health_related": "Kuhusiana na Afya",
+    "online": "Mtandaoni",
+    "other": "Nyingine"
+  },
+  "messages": {
+    "report_submitted": "Ripoti imewasilishwa kwa mafanikio",
+    "matched_to_circle": "Umeunganishwa na mzunguko wa msaada",
+    "report_not_found": "Ripoti haipatikani",
+    "server_error": "Hitilafu ya seva"
+  },
+  "common": {
+    "loading": "Inapakia...",
+    "error": "Hitilafu",
+    "success": "Mafanikio",
+    "submit": "Wasilisha",
+    "cancel": "Ghairi",
+    "save": "Hifadhi",
+    "delete": "Futa",
+    "edit": "Hariri",
+    "close": "Funga"
+  }
+}
+

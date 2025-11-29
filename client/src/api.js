@@ -182,6 +182,14 @@ export async function getDeveloperUsage(apiKey) {
   return apiCall('/api/developer/usage', { headers })
 }
 
+/**
+ * GET /api/badges/my-badges?anonymousId=xxx
+ * Get user's badges and progress
+ */
+export async function getMyBadges(anonymousId) {
+  return apiCall(`/api/badges/my-badges?anonymousId=${anonymousId}`)
+}
+
 export default {
   apiCall,
   matchCircle,
@@ -197,5 +205,6 @@ export default {
   getResources,
   getResource,
   registerDeveloper,
-  getDeveloperUsage
+  getDeveloperUsage,
+  getMyBadges
 }

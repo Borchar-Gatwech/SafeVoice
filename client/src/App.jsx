@@ -1,22 +1,48 @@
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import ReportForm from './components/ReportForm'
 import Homepage from './components/Homepage'
-import EmotionalSupportChat from './components/EmotionalSupportChat'
+import EmotionalSupportChatEnhanced from './components/EmotionalSupportChatEnhanced'
 import AdminDashboard from './components/AdminDashboard'
 import PeerSupportCircle from './components/PeerSupportCircle'
+import Resources from './components/Resources'
+import LanguageSelector from './components/LanguageSelector'
+import DeveloperPortal from './components/DeveloperPortal'
+import BadgeShowcase from './components/BadgeShowcase'
+import BadgeNotification from './components/BadgeNotification'
+import QuickHelpButton from './components/QuickHelpButton'
 
-const navItems = [
-  { id: 'home', label: 'Home', icon: '🏠' },
-  { id: 'report', label: 'Submit Report', icon: '📝' },
-  { id: 'support', label: 'AI Support Chat', icon: '💬' },
-  { id: 'circle', label: 'Peer Circle', icon: '👥' },
-  { id: 'resources', label: 'Resources', icon: '📞' },
-  { id: 'admin', label: 'Admin', icon: '⚙️' }
+// Main navigation items (shown in navbar) - labels will be translated in component
+const mainNavItems = [
+  { id: 'home', labelKey: 'home', icon: '🏠' },
+  { id: 'report', labelKey: 'submit_report', icon: '📝' },
+  { id: 'support', labelKey: 'ai_support_chat', icon: '💬' },
+  { id: 'circle', labelKey: 'peer_circle', icon: '👥' },
+  { id: 'resources', labelKey: 'resources', icon: '📞' }
+]
+
+// Secondary navigation items (moved to footer) - labels will be translated in component
+const secondaryNavItems = [
+  { id: 'badges', labelKey: 'my_badges', icon: '🏆' },
+  { id: 'developer', labelKey: 'developer_portal', icon: '🚀' },
+  { id: 'admin', labelKey: 'admin', icon: '⚙️' }
 ]
 
 export default function App() {
+  const { t } = useTranslation()
   const [currentPage, setCurrentPage] = useState('home')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [newBadge, setNewBadge] = useState(null)
+
+  // Get anonymousId from localStorage
+  const getAnonymousId = () => {
+    let anonymousId = localStorage.getItem('anonymousId');
+    if (!anonymousId) {
+      anonymousId = 'anon_' + Date.now() + '_' + Math.random().toString(36).substring(2, 15);
+      localStorage.setItem('anonymousId', anonymousId);
+    }
+    return anonymousId;
+  }
 
   const NavButton = ({ item }) => (
     <button
@@ -31,12 +57,12 @@ export default function App() {
       }`}
     >
       <span>{item.icon}</span>
-      <span>{item.label}</span>
+      <span>{t(item.labelKey || item.id)}</span>
     </button>
   )
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 flex flex-col">
+    <div className=" bg-gradient-to-br from-purple-50 via-white to-blue-50 flex flex-col">
       {/* Header/Navigation */}
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -50,9 +76,10 @@ export default function App() {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-2">
-              {navItems.map(item => (
+              {mainNavItems.map(item => (
                 <NavButton key={item.id} item={item} />
               ))}
+              <LanguageSelector />
             </nav>
 
             {/* Mobile Menu Button */}
@@ -70,100 +97,129 @@ export default function App() {
           {/* Mobile Navigation */}
           {mobileMenuOpen && (
             <nav className="md:hidden mt-4 pb-4 border-t border-gray-200 pt-4 flex flex-col gap-2">
-              {navItems.map(item => (
+              {mainNavItems.map(item => (
                 <NavButton key={item.id} item={item} />
               ))}
+              <div className="pt-2 border-t border-gray-200 mt-2">
+                <LanguageSelector />
+              </div>
+              <div className="pt-2 border-t border-gray-200 mt-2">
+                <p className="text-xs text-gray-500 mb-2">More Options:</p>
+                {secondaryNavItems.map(item => (
+                  <NavButton key={item.id} item={item} />
+                ))}
+              </div>
             </nav>
           )}
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <main className="flex-1 max-w-7xl mx-auto w-full">
         {currentPage === 'home' && <Homepage setCurrentPage={setCurrentPage} />}
         
         {currentPage === 'report' && (
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-6 sm:px-8 py-8">
-              <h2 className="text-3xl sm:text-4xl font-bold text-white">📝 Submit Anonymous Report</h2>
-              <p className="text-purple-100 mt-2">Your identity is completely protected</p>
+          <div className="bg-white shadow-lg overflow-hidden min-h-[calc(100vh-4rem)] flex flex-col">
+            <div className="bg-gradient-to-r from-purple-600 to-blue-600 px-6 sm:px-8 py-6">
+              <h2 className="text-3xl sm:text-4xl font-bold text-white">📝 {t('submit_report')}</h2>
+              <p className="text-purple-100 mt-2">{t('privacy_protected')}</p>
             </div>
-            <div className="p-6 sm:p-8">
-              <ReportForm />
+            <div className="flex-1 flex items-center justify-center p-5 sm:p-6">
+              <div className="w-full max-w-3xl">
+                <ReportForm 
+                  setCurrentPage={setCurrentPage} 
+                  onBadgeEarned={(badge) => setNewBadge(badge)}
+                />
+              </div>
             </div>
           </div>
         )}
         
         {currentPage === 'support' && (
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-6 sm:px-8 py-8">
-              <h2 className="text-3xl sm:text-4xl font-bold text-white">💬 AI Emotional Support Chat</h2>
-              <p className="text-blue-100 mt-2">Talk to our compassionate AI assistant anytime</p>
+          <div className="bg-white shadow-lg overflow-hidden min-h-[calc(100vh-4rem)] flex flex-col">
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-6 sm:px-8 py-6">
+              <h2 className="text-3xl sm:text-4xl font-bold text-white">💬 {t('ai_support_chat')}</h2>
+              <p className="text-blue-100 mt-2">{t('ai_chat_description', { defaultValue: 'Talk to our compassionate AI assistant anytime' })}</p>
             </div>
-            <div className="p-6 sm:p-8">
-              <EmotionalSupportChat />
+            <div className="flex-1 p-0">
+              <EmotionalSupportChatEnhanced setCurrentPage={setCurrentPage} />
             </div>
           </div>
         )}
         
-        {currentPage === 'circle' && (
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 sm:px-8 py-8">
-              <h2 className="text-3xl sm:text-4xl font-bold text-white">👥 Peer Support Circle</h2>
-              <p className="text-indigo-100 mt-2">Connect with survivors and find strength in shared experiences</p>
+        {currentPage === 'badges' && (
+          <div className="bg-white shadow-lg overflow-hidden min-h-[calc(100vh-4rem)] flex flex-col">
+            <div className="bg-gradient-to-r from-yellow-500 to-orange-500 px-6 sm:px-8 py-6">
+              <h2 className="text-3xl sm:text-4xl font-bold text-white">🏆 {t('my_badges', { defaultValue: 'My Badges' })}</h2>
+              <p className="text-yellow-100 mt-2">{t('view_badges_progress', { defaultValue: 'View your badges and progress' })}</p>
             </div>
-            <div className="p-6 sm:p-8">
+            <div className="flex-1 p-6 sm:p-8 overflow-y-auto">
+              <BadgeShowcase anonymousId={getAnonymousId()} />
+            </div>
+          </div>
+        )}
+        
+        {currentPage === 'developer' && (
+          <DeveloperPortal />
+        )}
+        
+        {currentPage === 'circle' && (
+          <div className="bg-white shadow-lg overflow-hidden min-h-[calc(100vh-4rem)] flex flex-col">
+            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 sm:px-8 py-6">
+              <h2 className="text-3xl sm:text-4xl font-bold text-white">👥 {t('peer_circle')}</h2>
+              <p className="text-indigo-100 mt-2">{t('circle_description')}</p>
+            </div>
+            <div className="flex-1 p-6 sm:p-8 overflow-y-auto">
               <PeerSupportCircle />
             </div>
           </div>
         )}
         
         {currentPage === 'resources' && (
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div className="bg-gradient-to-r from-green-600 to-teal-600 px-6 sm:px-8 py-8">
-              <h2 className="text-3xl sm:text-4xl font-bold text-white">📞 Safety Resources</h2>
-              <p className="text-green-100 mt-2">Find help and support when you need it most</p>
+          <div className="bg-white shadow-lg overflow-hidden min-h-[calc(100vh-4rem)] flex flex-col">
+            <div className="bg-gradient-to-r from-green-600 to-teal-600 px-6 sm:px-8 py-6">
+              <h2 className="text-3xl sm:text-4xl font-bold text-white">📞 {t('resources')}</h2>
+              <p className="text-green-100 mt-2">{t('find_help')}</p>
             </div>
-            <div className="p-6 sm:p-8 space-y-6">
-              <div className="border-l-4 border-purple-600 pl-6 py-4 hover:bg-purple-50 rounded-r-lg transition-colors">
-                <h3 className="text-xl font-bold text-gray-900">🚨 Emergency Hotlines</h3>
-                <p className="text-gray-600 mt-3 font-medium">National Sexual Assault Hotline</p>
-                <p className="text-gray-700 text-lg">+254695530598</p>
-                <p className="text-gray-600 mt-2 font-medium">Domestic Violence Hotline</p>
-                <p className="text-gray-700 text-lg">+2547695530598</p>
-              </div>
-              
-              <div className="border-l-4 border-blue-600 pl-6 py-4 hover:bg-blue-50 rounded-r-lg transition-colors">
-                <h3 className="text-xl font-bold text-gray-900">💻 Online Support</h3>
-                <p className="text-gray-600 mt-3">SAFE.org - Confidential support and resources</p>
-                <p className="text-gray-600">Crisis Text Line: Text HOME to 741741</p>
-              </div>
-
-              <div className="border-l-4 border-green-600 pl-6 py-4 hover:bg-green-50 rounded-r-lg transition-colors">
-                <h3 className="text-xl font-bold text-gray-900">🌍 International Support</h3>
-                <p className="text-gray-600 mt-3">Global resources and information available at WHO.int</p>
-              </div>
+            <div className="flex-1 p-6 sm:p-8 overflow-y-auto">
+              <Resources />
             </div>
           </div>
         )}
         
         {currentPage === 'admin' && (
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div className="bg-gradient-to-r from-gray-700 to-gray-900 px-6 sm:px-8 py-8">
-              <h2 className="text-3xl sm:text-4xl font-bold text-white">⚙️ Admin Dashboard</h2>
-              <p className="text-gray-300 mt-2">Manage reports and system settings</p>
+          <div className="bg-white shadow-lg overflow-hidden min-h-[calc(100vh-4rem)] flex flex-col">
+            <div className="bg-gradient-to-r from-gray-700 to-gray-900 px-6 sm:px-8 py-6">
+              <h2 className="text-3xl sm:text-4xl font-bold text-white">⚙️ {t('admin_dashboard')}</h2>
+              <p className="text-gray-300 mt-2">{t('manage_reports')}</p>
             </div>
-            <div className="p-6 sm:p-8">
+            <div className="flex-1 p-6 sm:p-8 overflow-y-auto">
               <AdminDashboard />
             </div>
           </div>
         )}
       </main>
 
+      {/* Badge Notification Overlay */}
+      {newBadge && (
+        <BadgeNotification
+          badge={newBadge}
+          onClose={() => setNewBadge(null)}
+          onViewBadges={() => {
+            setNewBadge(null);
+            setCurrentPage('badges');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+        />
+      )}
+
+      {/* Quick Help Floating Button */}
+      <QuickHelpButton setCurrentPage={setCurrentPage} />
+
       {/* Footer */}
       <footer className="mt-auto bg-gradient-to-r from-gray-900 to-gray-800 text-gray-300 border-t border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
             <div>
               <h4 className="text-white font-bold mb-4 flex items-center gap-2">
                 <span>🛡️</span> SafeVoice
@@ -173,9 +229,28 @@ export default function App() {
             <div>
               <h4 className="text-white font-bold mb-4">Services</h4>
               <ul className="text-sm space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition">Anonymous Reports</a></li>
-                <li><a href="#" className="hover:text-white transition">AI Support Chat</a></li>
-                <li><a href="#" className="hover:text-white transition">Resources</a></li>
+                <li><button onClick={() => setCurrentPage('report')} className="hover:text-white transition text-left">Anonymous Reports</button></li>
+                <li><button onClick={() => setCurrentPage('support')} className="hover:text-white transition text-left">AI Support Chat</button></li>
+                <li><button onClick={() => setCurrentPage('resources')} className="hover:text-white transition text-left">Resources</button></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-white font-bold mb-4">More</h4>
+              <ul className="text-sm space-y-2 text-gray-400">
+                {secondaryNavItems.map(item => (
+                  <li key={item.id}>
+                    <button 
+                      onClick={() => {
+                        setCurrentPage(item.id)
+                        window.scrollTo({ top: 0, behavior: 'smooth' })
+                      }}
+                      className="hover:text-white transition flex items-center gap-2"
+                    >
+                      <span>{item.icon}</span>
+                      <span>{t(item.labelKey || item.id)}</span>
+                    </button>
+                  </li>
+                ))}
               </ul>
             </div>
             <div>

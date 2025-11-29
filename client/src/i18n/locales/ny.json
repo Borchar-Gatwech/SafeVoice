@@ -1,0 +1,21 @@
+{
+  "welcome": "Takulandirani ku-SafeCircle",
+  "submit_report": "Tumiza Nkhani",
+  "peer_support": "Thandizo la Anzathu",
+  "resources": "Zinthu Zofunika",
+  "home": "Kunyumba",
+  "admin": "Woyang'anira",
+  "ai_support_chat": "Mlankhulano wa Thandizo la AI",
+  "peer_circle": "Gulu la Anzathu",
+  "privacy_protected": "Chinsinsi Chanu Chazitetezedwa",
+  "privacy_notice": "Chilichonse chimene mukugawana ndi chinsinsi kwathunthu. Sitikusonkhanitsa kapena kusunga zidziwitso zolondola za munthu.",
+  "what_happened": "Kodi Chinthu Chake Chinali Chotani?",
+  "optional": "(zokonda)",
+  "required": "*",
+  "submit": "Tumiza",
+  "loading": "Zikupangidwa...",
+  "error": "Vuto",
+  "success": "Zabwino",
+  "cancel": "Letsani"
+}
+

@@ -1,0 +1,36 @@
+{
+  "welcome": "Welcome to SafeCircle",
+  "submit_report": "Submit Report",
+  "peer_support": "Peer Support",
+  "resources": "Resources",
+  "incident_types": {
+    "online_harassment": "Online Harassment",
+    "workplace_discrimination": "Workplace Discrimination",
+    "harassment": "Harassment",
+    "safety_concern": "Safety Concern",
+    "discrimination": "Discrimination",
+    "workplace_issue": "Workplace Issue",
+    "educational": "Educational",
+    "health_related": "Health-Related",
+    "online": "Online",
+    "other": "Other"
+  },
+  "messages": {
+    "report_submitted": "Report submitted successfully",
+    "matched_to_circle": "You have been matched to a support circle",
+    "report_not_found": "Report not found",
+    "server_error": "Server error"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close"
+  }
+}
+

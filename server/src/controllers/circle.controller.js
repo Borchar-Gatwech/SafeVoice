@@ -2,6 +2,7 @@ const Circle = require('../models/circle.model');
 const CircleMember = require('../models/circleMember.model');
 const CircleMessage = require('../models/circleMessage.model');
 const MatchingService = require('../services/matching.service');
+const badgeService = require('../services/badgeService');
 
 /**
  * POST /api/circles/match
@@ -43,6 +44,10 @@ exports.findMatch = async (req, res) => {
       matchResult.circle._id,
       { displayName, reportId }
     );
+
+    // Check for badge unlocks (async, don't block response)
+    badgeService.checkAndAwardBadges(anonymousId, 'join_circle')
+      .catch(err => console.error('Badge check error:', err));
 
     return res.status(200).json({
       success: true,
@@ -186,6 +191,10 @@ exports.sendMessage = async (req, res) => {
     member.messageCount += 1;
     member.lastActive = new Date();
     await member.save();
+
+    // Check for badge unlocks (async, don't block response)
+    badgeService.checkAndAwardBadges(anonymousId, 'send_message')
+      .catch(err => console.error('Badge check error:', err));
 
     return res.status(201).json({
       message: {

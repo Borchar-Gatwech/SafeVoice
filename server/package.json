@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "create-admin": "node src/scripts/createAdmin.js"
+    "create-admin": "node src/scripts/createAdmin.js",
+    "init-badges": "node -e \"require('dotenv').config(); require('./src/db/connect')(process.env.MONGO_URI).then(() => { require('./src/services/badgeService').initializeBadges().then(() => { console.log('✅ Badges initialized!'); process.exit(0); }).catch(err => { console.error('❌ Error:', err); process.exit(1); }); });\""
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -14,8 +15,15 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "i18next": "^23.7.6",
+    "i18next-fs-backend": "^2.3.1",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.3",
+    "multer": "^1.4.5-lts.1",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.7",
+    "sharp": "^0.33.0",
+    "socket.io": "^4.7.2",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
   },

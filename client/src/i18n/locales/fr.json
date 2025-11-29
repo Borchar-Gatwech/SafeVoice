@@ -1,0 +1,21 @@
+{
+  "welcome": "Bienvenue sur SafeCircle",
+  "submit_report": "Soumettre un rapport",
+  "peer_support": "Soutien par les pairs",
+  "resources": "Ressources",
+  "home": "Accueil",
+  "admin": "Admin",
+  "ai_support_chat": "Chat d'assistance IA",
+  "peer_circle": "Cercle de pairs",
+  "privacy_protected": "Votre confidentialité est protégée",
+  "privacy_notice": "Tout ce que vous partagez est entièrement confidentiel. Nous ne collectons ni ne stockons aucune information d'identification personnelle.",
+  "what_happened": "Que s'est-il passé?",
+  "optional": "(optionnel)",
+  "required": "*",
+  "submit": "Soumettre",
+  "loading": "Chargement...",
+  "error": "Erreur",
+  "success": "Succès",
+  "cancel": "Annuler"
+}
+

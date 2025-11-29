@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { matchCircle } from '../api'
+import PeerCircleChat from './PeerCircleChat'
 
 export default function PeerSupportCircle() {
   const [step, setStep] = useState('welcome') // welcome, matching, joined, create
@@ -19,16 +20,19 @@ export default function PeerSupportCircle() {
     wantsFacilitator: false
   })
 
-  const incidentTypes = [
-    '🚨 Harassment',
-    '⚠️ Safety Concern',
-    '👥 Discrimination',
-    '💼 Workplace Issue',
-    '🏫 Educational',
-    '🏥 Health-Related',
-    '🌐 Online',
-    '📍 Other'
-  ]
+  // Map display labels to API values
+  const incidentTypeMap = {
+    '🚨 Harassment': 'harassment',
+    '⚠️ Safety Concern': 'safety_concern',
+    '👥 Discrimination': 'discrimination',
+    '💼 Workplace Issue': 'workplace_issue',
+    '🏫 Educational': 'educational',
+    '🏥 Health-Related': 'health_related',
+    '🌐 Online': 'online_harassment',
+    '📍 Other': 'other'
+  }
+  
+  const incidentTypes = Object.keys(incidentTypeMap)
 
   const languages = [
     'English',
@@ -62,7 +66,34 @@ export default function PeerSupportCircle() {
     setError('')
     
     try {
-      const { data, ok } = await matchCircle(formData)
+      // Map incident type display value to API value
+      const normalizedIncidentType = incidentTypeMap[formData.incidentType] || 'other'
+      
+      // Normalize location to locationRegion (expecting country name like "nigeria")
+      const locationRegion = formData.location.toLowerCase().trim()
+      
+      // Normalize language to lowercase
+      const normalizedLanguage = formData.language.toLowerCase().trim()
+      
+      // Map safety level to severity
+      let severity = 'low'
+      if (formData.safetyLevel.includes('High') || formData.safetyLevel.includes('🔴')) {
+        severity = 'high'
+      } else if (formData.safetyLevel.includes('Medium') || formData.safetyLevel.includes('🟡')) {
+        severity = 'medium'
+      }
+      
+      // Prepare API payload
+      const apiPayload = {
+        incidentType: normalizedIncidentType,
+        locationRegion: locationRegion,
+        language: normalizedLanguage,
+        severity: severity
+      }
+      
+      console.log('Sending API payload:', apiPayload) // Debug log
+      
+      const { data, ok } = await matchCircle(apiPayload)
       if (!ok) {
         throw new Error(data.message || 'Failed to search for match')
       }
@@ -462,73 +493,48 @@ export default function PeerSupportCircle() {
         </div>
       )}
 
-      {/* Circle Joined Successfully */}
-      {step === 'joined' && joinedCircle && (
+      {/* Circle Joined Successfully - Show Chat */}
+      {step === 'joined' && joinedCircle && anonymousId && (
         <div className="space-y-6">
-          <div className="bg-gradient-to-r from-emerald-50 to-green-50 border-2 border-emerald-300 rounded-2xl p-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-              🎉 Welcome to Your Circle!
-            </h2>
-            <p className="text-lg text-gray-700 mb-4">
-              You've successfully joined a supportive peer community.
-            </p>
-          </div>
-
-          <div className="bg-white border-2 border-gray-200 rounded-2xl p-8 space-y-6">
-            <div className="text-center">
-              <p className="text-sm text-gray-500 mb-2">Circle ID</p>
-              <p className="text-2xl font-mono font-bold text-gray-900 bg-gray-50 p-3 rounded-lg">
-                {joinedCircle._id?.substring(0, 12) || 'ID'}...
-              </p>
-              <p className="text-xs text-gray-500 mt-2">Save this if you need to refer to your circle</p>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="font-bold text-gray-900">📋 Your Circle Details:</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-xs text-gray-500">Members</p>
-                  <p className="text-2xl font-bold text-gray-900">{joinedCircle.memberCount || 1}</p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-xs text-gray-500">Capacity</p>
-                  <p className="text-2xl font-bold text-gray-900">{joinedCircle.maxMembers || 5}</p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-lg col-span-2">
-                  <p className="text-xs text-gray-500">Location</p>
-                  <p className="text-lg font-bold text-gray-900">{joinedCircle.location}</p>
-                </div>
+          <div className="bg-gradient-to-r from-emerald-50 to-green-50 border-2 border-emerald-300 rounded-2xl p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-1 flex items-center gap-2">
+                  🎉 Welcome to Your Circle!
+                </h2>
+                <p className="text-sm text-gray-700">
+                  {joinedCircle.location || 'Peer Support Circle'} • {joinedCircle.memberCount || 1} members
+                </p>
               </div>
+              <button
+                onClick={resetFlow}
+                className="px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 rounded-lg font-medium transition border border-gray-200"
+              >
+                Leave Circle
+              </button>
             </div>
-
-            <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
-              <p className="text-sm font-bold text-gray-900 mb-2">💬 What's Next?</p>
-              <ul className="text-sm text-gray-700 space-y-2">
-                <li>✓ You'll receive updates when other members join</li>
-                <li>✓ A secure chat room will open once 2-3 members are ready</li>
-                <li>✓ Take your time getting to know other members</li>
-                <li>✓ You can leave at any time if needed</li>
-                <li>✓ All conversations are confidential and protected</li>
-              </ul>
-            </div>
-
-            <div className="bg-purple-50 border-2 border-purple-200 rounded-xl p-4">
-              <p className="text-sm font-bold text-gray-900 mb-2">🛡️ Safety Reminders</p>
-              <ul className="text-sm text-gray-700 space-y-1">
-                <li>• Never share personal identifying information</li>
-                <li>• If conversations become unsafe, report members to moderators</li>
-                <li>• Our AI monitors for abuse and harmful behavior</li>
-                <li>• You're always in control—leave if you're uncomfortable</li>
-              </ul>
-            </div>
-
-            <button
-              onClick={resetFlow}
-              className="w-full px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold hover:shadow-lg transition-all transform hover:scale-105 text-lg"
-            >
-              Return to Home
-            </button>
           </div>
+
+          {/* Real-time Chat Interface */}
+          <PeerCircleChat
+            circleId={joinedCircle._id || joinedCircle.id}
+            anonymousId={anonymousId}
+            displayName={memberDisplayName}
+            onLeave={resetFlow}
+          />
+
+          {/* Safety Reminders - Collapsible */}
+          <details className="bg-purple-50 border-2 border-purple-200 rounded-xl p-4">
+            <summary className="text-sm font-bold text-gray-900 cursor-pointer">
+              🛡️ Safety Reminders
+            </summary>
+            <ul className="text-sm text-gray-700 space-y-1 mt-3">
+              <li>• Never share personal identifying information</li>
+              <li>• If conversations become unsafe, report members to moderators</li>
+              <li>• Our AI monitors for abuse and harmful behavior</li>
+              <li>• You're always in control—leave if you're uncomfortable</li>
+            </ul>
+          </details>
         </div>
       )}
     </div>
