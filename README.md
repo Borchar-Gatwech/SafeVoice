@@ -67,7 +67,7 @@ PORT=5000
 
 # ADMIN/API SECURITY
 ADMIN_USER=admin
-ADMIN_PASS=admin123
+ADMIN_PASS=safe1234
 JWT_SECRET=some_long_random_secret
 # Note: For production, use secure, random values for all secrets.
 ```
