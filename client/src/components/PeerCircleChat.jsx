@@ -29,24 +29,92 @@ export default function PeerCircleChat({ circleId, anonymousId, displayName, onL
   const typingTimeoutRef = useRef(null);
   const inputRef = useRef(null);
   const prevMessagesLengthRef = useRef(0);
+  const scrollPositionRef = useRef(0);
+  const userJustSentMessageRef = useRef(false);
 
-  // Improved scroll behavior - prevent layout shifts
+  // Improved scroll behavior - prevent layout shifts and aggressive scrolling
+  // Only scroll when messages change, NOT when typing indicators change
   useEffect(() => {
-    if (messagesContainerRef.current) {
-      const { scrollHeight, clientHeight, scrollTop } = messagesContainerRef.current;
-      const isScrolledNearBottom = scrollHeight - (clientHeight + scrollTop) < 100;
+    // Don't scroll on initial mount
+    if (prevMessagesLengthRef.current === 0 && messages.length > 0) {
+      prevMessagesLengthRef.current = messages.length;
+      return;
+    }
+
+    if (messagesContainerRef.current && messages.length !== prevMessagesLengthRef.current) {
+      const container = messagesContainerRef.current;
+      const { scrollHeight, clientHeight, scrollTop } = container;
+      const isScrolledNearBottom = scrollHeight - (clientHeight + scrollTop) < 200;
       
-      // Only auto-scroll if user is near bottom or it's a new message
-      if (isScrolledNearBottom || messages.length !== prevMessagesLengthRef.current) {
-        // Use requestAnimationFrame to prevent layout shifts
-        requestAnimationFrame(() => {
-          messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-        });
+      // Only auto-scroll if user is near bottom AND it's a new message
+      if (isScrolledNearBottom) {
+        // Use a small delay to ensure DOM has fully updated before scrolling
+        // This prevents aggressive scrolling that causes both interfaces to jump
+        const scrollTimeout = setTimeout(() => {
+          if (messagesContainerRef.current) {
+            const updatedContainer = messagesContainerRef.current;
+            const newScrollHeight = updatedContainer.scrollHeight;
+            const newClientHeight = updatedContainer.clientHeight;
+            const currentScrollTop = updatedContainer.scrollTop;
+            
+            // Only scroll if still near bottom (user didn't scroll up)
+            const stillNearBottom = newScrollHeight - (newClientHeight + currentScrollTop) < 250;
+            
+            if (stillNearBottom) {
+              // Use scrollTop with smooth behavior via CSS transition
+              // This is more controlled than scrollIntoView and prevents both interfaces from jumping
+              updatedContainer.style.scrollBehavior = 'smooth';
+              updatedContainer.scrollTop = newScrollHeight;
+              
+              // Reset scroll behavior after a short delay
+              setTimeout(() => {
+                if (updatedContainer) {
+                  updatedContainer.style.scrollBehavior = 'auto';
+                }
+              }, 300);
+            }
+          }
+        }, 150); // Delay to let DOM fully settle and prevent aggressive scrolling
+        
+        // Reset the flag after scrolling
+        if (userJustSentMessageRef.current) {
+          userJustSentMessageRef.current = false;
+        }
+        
+        // Return cleanup function to cancel scroll if component unmounts
+        return () => clearTimeout(scrollTimeout);
       }
       
+      // Save current scroll position
+      scrollPositionRef.current = scrollTop;
       prevMessagesLengthRef.current = messages.length;
     }
-  }, [messages, typingUsers]);
+  }, [messages]); // Removed typingUsers from dependencies - typing indicator should NOT trigger scroll
+
+  // Preserve scroll position when typing indicator appears/disappears
+  // This prevents the interface from jumping when someone starts/stops typing
+  useEffect(() => {
+    if (messagesContainerRef.current && typingUsers.length >= 0) {
+      const container = messagesContainerRef.current;
+      const currentScrollTop = container.scrollTop;
+      const { scrollHeight, clientHeight } = container;
+      const isNearBottom = scrollHeight - (clientHeight + currentScrollTop) < 200;
+      
+      // Only preserve scroll if user is NOT near bottom
+      // If near bottom, let it scroll naturally (typing indicator won't affect it due to fixed height)
+      if (!isNearBottom && scrollPositionRef.current > 0) {
+        // Use requestAnimationFrame to ensure DOM has updated
+        requestAnimationFrame(() => {
+          if (messagesContainerRef.current) {
+            messagesContainerRef.current.scrollTop = scrollPositionRef.current;
+          }
+        });
+      } else {
+        // Update saved position
+        scrollPositionRef.current = currentScrollTop;
+      }
+    }
+  }, [typingUsers]); // This effect only preserves scroll, doesn't trigger new scrolling
 
   // Initialize socket connection and load messages
   useEffect(() => {
@@ -187,6 +255,9 @@ export default function PeerCircleChat({ circleId, anonymousId, displayName, onL
     try {
       // Use Socket.io for real-time messaging
       if (isConnected()) {
+        // Mark that user just sent a message (for scroll behavior)
+        userJustSentMessageRef.current = true;
+        
         sendSocketMessage(messageText);
         // Optimistically add message (will be confirmed by socket)
         setMessages(prev => [...prev, {
@@ -281,7 +352,7 @@ export default function PeerCircleChat({ circleId, anonymousId, displayName, onL
       <div 
         ref={messagesContainerRef}
         className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50"
-        style={{ scrollBehavior: 'smooth', scrollbarGutter: 'stable' }}
+        style={{ scrollbarGutter: 'stable' }}
       >
         {messages.length === 0 ? (
           <div className="text-center py-12 text-gray-500">
@@ -326,23 +397,25 @@ export default function PeerCircleChat({ circleId, anonymousId, displayName, onL
           })
         )}
 
-        {/* Typing Indicator */}
-        {typingUsers.length > 0 && (
-          <div className="flex justify-start">
-            <div className="bg-white border border-gray-200 rounded-lg px-4 py-2">
-              <div className="flex items-center gap-1">
-                <div className="flex gap-1">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+        {/* Typing Indicator - Fixed height to prevent layout shifts */}
+        <div className="min-h-[40px] flex items-start">
+          {typingUsers.length > 0 && (
+            <div className="flex justify-start w-full">
+              <div className="bg-white border border-gray-200 rounded-lg px-4 py-2">
+                <div className="flex items-center gap-1">
+                  <div className="flex gap-1">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  </div>
+                  <span className="text-xs text-gray-600 ml-2">
+                    {typingUsers.map(u => u.displayName || 'Someone').join(', ')} typing...
+                  </span>
                 </div>
-                <span className="text-xs text-gray-600 ml-2">
-                  {typingUsers.map(u => u.displayName || 'Someone').join(', ')} typing...
-                </span>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         <div ref={messagesEndRef} />
       </div>
